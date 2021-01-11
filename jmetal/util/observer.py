@@ -168,6 +168,7 @@ class PlotFrontToFileObserver(Observer):
                         if self.counter > 0:
                             igd = InvertedGenerationalDistance(self.last_front)
                             igd_value = igd.compute(solutions)
+                            #igd_value = 1
                         else:
                             igd_value = 1
 
