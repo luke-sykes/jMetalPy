@@ -7,7 +7,7 @@ from jmetal.operator import PolynomialMutation, SBXCrossover
 from jmetal.problem.multiobjective.fda import FDA2
 from jmetal.util.observable import TimeCounter
 from jmetal.util.observer import PlotFrontToFileObserver, WriteFrontToFileObserver, ProgressBarObserver, \
-    VisualizerObserver
+    VisualizerObserver, BasicObserver
 from jmetal.util.solution import get_non_dominated_solutions, print_function_values_to_file, print_variables_to_file
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
@@ -54,14 +54,11 @@ def run_DynamicNSGAII():
         termination_criterion=StoppingByEvaluations(max_evaluations=max_evaluations),
     )
 
-    progress_bar = ProgressBarObserver(max=max_evaluations)
-    algorithm.observable.register(observer=progress_bar)
-
-    real_time = VisualizerObserver()
-    algorithm.observable.register(observer=real_time)
-
-    #algorithm.observable.register(observer=PlotFrontToFileObserver("dynamic_front_vis"))
-    #algorithm.observable.register(observer=WriteFrontToFileObserver("dynamic_front"))
+    algorithm.observable.register(observer=ProgressBarObserver(max=max_evaluations))
+    algorithm.observable.register(observer=VisualizerObserver())
+    algorithm.observable.register(observer=PlotFrontToFileObserver("dynamic_front_vis"))
+    algorithm.observable.register(observer=WriteFrontToFileObserver("dynamic_front"))
+    #algorithm.observable.register(observer=BasicObserver())
 
     algorithm.run()
     front = algorithm.get_result()

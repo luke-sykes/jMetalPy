@@ -156,6 +156,8 @@ class DynamicNSGAII(NSGAII[S, R], DynamicAlgorithm):
 
             self.completed_iterations += 1
 
+            return True  # TODO is this needed?
+
 
 class DistributedNSGAII(Algorithm[S, R]):
 
