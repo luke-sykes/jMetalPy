@@ -5,6 +5,8 @@ from jmetal.lab.experiment import Job, Experiment, generate_summary_from_experim
 from jmetal.lab.visualization import Plot
 from jmetal.operator import PolynomialMutation, SBXCrossover
 from jmetal.problem.multiobjective.fda import FDA2
+from jmetal.problem.multiobjective.gta import GTA1a
+from jmetal.problem.multiobjective.sdp import SDP2
 from jmetal.util.observable import TimeCounter
 from jmetal.util.observer import PlotFrontToFileObserver, WriteFrontToFileObserver, ProgressBarObserver, \
     VisualizerObserver, BasicObserver
@@ -38,7 +40,7 @@ def configure_experiment(problems: dict, n_run: int):
 
 
 def run_DynamicNSGAII():
-    problem: DynamicProblem = FDA2()
+    problem: DynamicProblem = SDP2()
 
     time_counter = TimeCounter(delay=1)
     time_counter.observable.register(problem)

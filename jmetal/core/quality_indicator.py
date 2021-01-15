@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
+from typing import List, TypeVar
 
 import numpy as np
 from scipy import spatial
+
+S = TypeVar('S')
 
 
 class QualityIndicator(ABC):
@@ -71,23 +74,28 @@ class GenerationalDistance(QualityIndicator):
 
 
 class InvertedGenerationalDistance(QualityIndicator):
-    def __init__(self, reference_front: np.array = None):
+
+    def __init__(self, reference_front: List[S] = None, p: float = 2.0):
         super(InvertedGenerationalDistance, self).__init__(is_minimization=True)
         self.reference_front = reference_front
+        self.p = p
 
-    def compute(self, solutions: np.array):
-        if self.reference_front is None:
+    def compute(self, solutions: List[S]):
+        if not self.reference_front:
             raise Exception('Reference front is none')
 
-        distances = spatial.distance.cdist(self.reference_front, solutions)
+        reference_front = [s.objectives for s in self.reference_front]
+        solutions = [s.objectives for s in solutions]
+
+        distances = spatial.distance.cdist(np.asarray(reference_front), np.asarray(solutions))
 
         return np.mean(np.min(distances, axis=1))
 
-    def get_short_name(self) -> str:
-        return 'IGD'
-
     def get_name(self) -> str:
         return 'Inverted Generational Distance'
+
+    def get_short_name(self) -> str:
+        return 'IGD'
 
 
 class EpsilonIndicator(QualityIndicator):
