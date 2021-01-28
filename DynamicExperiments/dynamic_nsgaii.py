@@ -4,7 +4,7 @@ from jmetal.core.quality_indicator import GenerationalDistance, EpsilonIndicator
 from jmetal.lab.experiment import Job, Experiment, generate_summary_from_experiment
 from jmetal.lab.visualization import Plot
 from jmetal.operator import PolynomialMutation, SBXCrossover
-from jmetal.problem.multiobjective.fda import FDA2
+from jmetal.problem.multiobjective.fda import FDA2, FDA1, FDA3, FDA4, FDA5
 from jmetal.problem.multiobjective.gta import GTA1a
 from jmetal.problem.multiobjective.sdp import SDP2
 from jmetal.util.observable import TimeCounter
@@ -81,21 +81,21 @@ def run_DynamicNSGAII():
 
 
 if __name__ == '__main__':
-    run_DynamicNSGAII()
-    """
+    #run_DynamicNSGAII()
+
     # Configure the experiments
-    jobs = configure_experiment(problems={'FDA2': FDA2()}, n_run=1)
+    jobs = configure_experiment(problems={'FDA1': FDA1(), 'FDA2': FDA2(), 'FDA3': FDA3(), 'FDA4': FDA4(), 'FDA5': FDA5()}, n_run=1)
 
     # Run the study
-    output_directory = 'data'
+    output_directory = 'NSGAII_FDA_data'
 
     experiment = Experiment(output_dir=output_directory, jobs=jobs)
     experiment.run()
 
     # Generate summary file
+    """
     generate_summary_from_experiment(
         input_dir=output_directory,
         reference_fronts='resources/reference_front',
-        quality_indicators=[GenerationalDistance(), EpsilonIndicator(), HyperVolume([1.0, 1.0])]
-    )
-    """
+        quality_indicators=[GenerationalDistance(), HyperVolume([1.0, 1.0])]
+    )"""
