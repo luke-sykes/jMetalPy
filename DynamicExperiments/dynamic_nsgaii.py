@@ -39,50 +39,49 @@ def configure_experiment(problems: dict, n_run: int):
     return jobs
 
 
-def run_DynamicNSGAII():
-    problem: DynamicProblem = SDP2()
+def run_DynamicNSGAII(problems):
 
-    time_counter = TimeCounter(delay=1)
-    time_counter.observable.register(problem)
-    time_counter.start()
+    for problem in problems:
 
-    max_evaluations = 25000
-    algorithm = DynamicNSGAII(
-        problem=problem,
-        population_size=100,
-        offspring_population_size=100,
-        mutation=PolynomialMutation(probability=1.0 / problem.number_of_variables, distribution_index=20),
-        crossover=SBXCrossover(probability=1.0, distribution_index=20),
-        termination_criterion=StoppingByEvaluations(max_evaluations=max_evaluations),
-    )
+        time_counter = TimeCounter(delay=1)
+        time_counter.observable.register(problem[1])
+        time_counter.start()
 
-    algorithm.observable.register(observer=ProgressBarObserver(max=max_evaluations))
-    algorithm.observable.register(observer=VisualizerObserver())
-    algorithm.observable.register(observer=PlotFrontToFileObserver("dynamic_front_vis"))
-    algorithm.observable.register(observer=WriteFrontToFileObserver("dynamic_front"))
-    #algorithm.observable.register(observer=BasicObserver())
+        max_evaluations = 25000
+        algorithm = DynamicNSGAII(
+            problem=problem[1],
+            population_size=100,
+            offspring_population_size=100,
+            mutation=PolynomialMutation(probability=1.0 / problem[1].number_of_variables, distribution_index=20),
+            crossover=SBXCrossover(probability=1.0, distribution_index=20),
+            termination_criterion=StoppingByEvaluations(max_evaluations=max_evaluations),
+        )
 
-    algorithm.run()
-    front = algorithm.get_result()
+        algorithm.observable.register(observer=ProgressBarObserver(max=max_evaluations))
+        algorithm.observable.register(observer=VisualizerObserver())
+        algorithm.observable.register(observer=PlotFrontToFileObserver(problem[0] + "_dynamic_front_vis"))
+        algorithm.observable.register(observer=WriteFrontToFileObserver(problem[0] + "_dynamic_front"))
+        #algorithm.observable.register(observer=BasicObserver())
 
-    non_dominated_solutions = get_non_dominated_solutions(front)
+        algorithm.run()
+        front = algorithm.get_result()
 
-    # save to files
-    print_function_values_to_file(front, 'FUN.DYNAMICNSGAII.FDA2')
-    print_variables_to_file(front, 'VAR.DYNAMICNSGAII.FDA2')
+        non_dominated_solutions = get_non_dominated_solutions(front)
 
-    # Plot
-    #plot_front = Plot(title='Pareto front approximation', axis_labels=['x', 'y'])
-    #plot_front.plot(non_dominated_solutions, label='DynamicNSGAII-FDA2', filename='DYNAMICNSGAII-FDA2', format='png')
+        # save to files
+        print_function_values_to_file(front, 'FUN.DYNAMICNSGAII.' + problem[0])
+        print_variables_to_file(front, 'VAR.DYNAMICNSGAII.' + problem[0])
 
-    # Plot
-    plot_front = Plot(title='Pareto front approximation', axis_labels=['x', 'y'])
-    plot_front.plot(front, label='DynamicNSGAII-FDA2', filename='DYNAMICNSGAII-FDA2', format='png')
+        # Plot
+        plot_front = Plot(title='Pareto front approximation', axis_labels=['x', 'y'])
+        plot_front.plot(front, label='DynamicNSGAII-FDA2', filename='DYNAMICNSGAII-'+problem[0], format='png')
 
 
 if __name__ == '__main__':
-    #run_DynamicNSGAII()
+    problems = [("FDA1", FDA1())]
+    run_DynamicNSGAII(problems)
 
+"""
     # Configure the experiments
     jobs = configure_experiment(problems={'FDA1': FDA1(), 'FDA2': FDA2(), 'FDA3': FDA3(), 'FDA4': FDA4(), 'FDA5': FDA5()}, n_run=1)
 
@@ -93,9 +92,9 @@ if __name__ == '__main__':
     experiment.run()
 
     # Generate summary file
-    """
     generate_summary_from_experiment(
         input_dir=output_directory,
         reference_fronts='resources/reference_front',
         quality_indicators=[GenerationalDistance(), HyperVolume([1.0, 1.0])]
-    )"""
+    )
+    """
